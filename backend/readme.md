@@ -16,10 +16,11 @@
 
 
 # Database Architecture -> postgres
-    ## User Table
-        - name, email, password, address, phone, image, role, status, createdAt, updatedAt, updatedBy, createdBy
+
+## User Table
+    - name, email, password, address, phone, image, role, status, createdAt, updatedAt, updatedBy, createdBy
     
-    ## Projects Table
+## Projects Table
 
         
     
