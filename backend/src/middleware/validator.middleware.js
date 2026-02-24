@@ -2,12 +2,11 @@ module.exports = (schema) => {
     return async(req, res, next) => {
         try{
             const data = req.body
-            console.log(data)
             if(!data){
                 next({code: 422, message: "Empty payload...", status: "EMPTY_DATA_ERR"})
             }
 
-            await schema.validateAsync(data, {abordEarly: false})
+            await schema.validateAsync(data, {abortEarly: false})
             next()
         }catch(exception){
             // validation failed

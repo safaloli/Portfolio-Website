@@ -1,4 +1,5 @@
 const Joi = require('joi')
+const { UserRoles, Status } = require('../config/constants')
 
 const LoginDTO = Joi.object({
     email: Joi.string().min(3).max(50).required(),
@@ -29,8 +30,28 @@ const RegisterDTO = Joi.object({
     image: Joi.string().allow(null, "").optional().default(null),
 })
 
+const UpdateUserDto = Joi.object({
+    name: Joi.string().min(3).max(50).optional().messages({
+        "string.min": "Name should be at least of 3 character long",
+        "string.max": "Name can be more than 50 character long"
+    }),
+    email: Joi.string().email().optional(),
+    address: Joi.string().allow(null, "").optional().default(null),
+    phone: Joi.string().regex(phoneRegex).optional().messages({
+        "string.pattern.base": "Should only support the mobile number format from Nepal",
+    }),
+    role: Joi.string().regex(/^(admin|user)$/).optional().messages({
+        "string.pattern.base": "Role must be admin or user"
+    }),
+    image: Joi.string().allow(null, "").optional(),
+    status: Joi.string().regex(/^(active|inactive)$/).optional().messages({
+        "string.pattern.base": "Status must be active or inactive with case sensitive"
+    })
+})
+
 module.exports = {
     RegisterDTO,
     LoginDTO,
+    UpdateUserDto
 }
 

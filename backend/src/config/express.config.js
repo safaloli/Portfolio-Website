@@ -1,7 +1,10 @@
 const express = require('express')
 const mainRouter = require('../router')
 const errorHandler = require('../middleware/errorHandler.middleware')
+const {sqlInit} = require('./sequelize.config')
 
+
+sqlInit()
 const app = express()
 
 
