@@ -1,8 +1,11 @@
 module.exports = (error, req, res, next) => {
-    let code = error.code ?? 500;
+    console.error(error)
+    
     let detail = error.detail ?? error.details ?? null;
     let message = error.message ?? "Server error ....";
     let status = error.status ?? "SERVER_ERROR";
+
+    let code = typeof error.code === 'number' ? error.code: 500;
 
     // continuous development 
     

@@ -40,9 +40,6 @@ const UpdateUserDto = Joi.object({
     phone: Joi.string().regex(phoneRegex).optional().messages({
         "string.pattern.base": "Should only support the mobile number format from Nepal",
     }),
-    role: Joi.string().regex(/^(admin|user)$/).optional().messages({
-        "string.pattern.base": "Role must be admin or user"
-    }),
     image: Joi.string().allow(null, "").optional(),
     status: Joi.string().regex(/^(active|inactive)$/).optional().messages({
         "string.pattern.base": "Status must be active or inactive with case sensitive"

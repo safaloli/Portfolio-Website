@@ -22,5 +22,23 @@
     
 ## Projects Table
 
+
+<!-- things to do  -->
+How to design section schema validation
+
+How to render dynamic sections in React
+
+How to allow drag-drop section ordering
+
+Or how to add theme engine
+
+
+How to structure JSON response cleanly
+
+How to prevent slug conflict with API routes
+
+How to add custom domain support
+
+How to build theme engine
         
     

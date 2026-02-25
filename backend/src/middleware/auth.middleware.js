@@ -9,7 +9,7 @@ module.exports = (role = null) => {
         try{
             let token = req.headers['authorization']
             if(!token){
-                throw({code: 401, message: 'Token is empty', status: "TOKEN_EMPTY_ERR"})
+                throw({code: 401, message: 'Auth Token is empty', status: "TOKEN_EMPTY_ERR"})
             }
 
             token = token.replace("Bearer ", "")
@@ -35,6 +35,8 @@ module.exports = (role = null) => {
                 sessionDetail.user.role === UserRoles.ADMIN ||
                 (role && role.includes(sessionDetail.user.role))
             ){
+                console.log('Checking role is ', role)
+                console.log("Actual role is ", sessionDetail.user.role)
                 next()
             }else{
                 throw({

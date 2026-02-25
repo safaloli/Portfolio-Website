@@ -1,8 +1,8 @@
 const mainRouter = require('express').Router()
 const authRouter = require('./auth.router')
-const contactPageRouter = require('./contactPage.router')
+const portfolioRouter = require('./portfolio.router')
 
 mainRouter.use('/auth', authRouter)
-mainRouter.use('/contact', contactPageRouter)
+mainRouter.use('/portfolio', portfolioRouter)
 
 module.exports = mainRouter

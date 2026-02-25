@@ -1,7 +1,10 @@
 const UserModel = require('./User.model')
 const SessionModel = require('./Session.model')
-const ContactPageModel = require('./ContactPage.model')
 const {sequelize} = require('../config/sequelize.config')
+
+const PortfolioModel = require('./Portfolio.model')
+const PageModel = require('./Pages.model')
+const SectionModel = require('./Sections.model')
 
 
 // Define association
@@ -13,6 +16,25 @@ SessionModel.belongsTo(UserModel, {
     foreignKey: 'userId',
     as: 'user'
 });
+
+PortfolioModel.hasMany(PageModel, {
+    foreignKey: "portfolio_id",
+    as: "pages"
+});
+PageModel.belongsTo(PortfolioModel, {
+    foreignKey: "portfolio_id",
+    as: 'portfolio'
+});
+
+PageModel.hasMany(SectionModel, {
+    foreignKey: 'page_id',
+    as: 'sections'
+});
+SectionModel.belongsTo(PageModel, {
+    foreignKey: 'page_id',
+    as: 'page'
+});
+
 
 (async()=> {
     try{
@@ -26,5 +48,7 @@ SessionModel.belongsTo(UserModel, {
 module.exports = {
     UserModel, 
     SessionModel,
-    ContactPageModel
+    PageModel,
+    PortfolioModel,
+    SectionModel
 }

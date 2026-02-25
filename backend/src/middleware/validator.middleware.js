@@ -10,7 +10,7 @@ module.exports = (schema) => {
             next()
         }catch(exception){
             // validation failed
-            console.log(exception)
+            // console.log(exception)
             let errBag = {}
             if(exception.details){
                 exception.details.map((error) => {
