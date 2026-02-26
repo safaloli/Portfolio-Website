@@ -1,3 +1,4 @@
+const { sequelize } = require("../config/sequelize.config")
 const sectionService = require("../services/section.service")
 
 class sectionController {
@@ -112,68 +113,75 @@ class sectionController {
     // }
 
 
-    // async updatesection(req, res, next){
-    //     try{
-    //         const {portfolio_slug, section_slug} = req.params
+    async updateSection(req, res, next){
+        const transaction = await sequelize.transaction()
+        try{
+            const {portfolio_slug, page_slug, section_id} = req.params
 
-    //         // check portfolio is available or not
-    //         const checkPortfolio = await portfolioService.findSingleRowByFilter({
-    //             slug: portfolio_slug,
-    //             user_id: req.loggedInUser.id
-    //         })
-    //         if(!checkPortfolio){
-    //             throw{
-    //                 code: 404,
-    //                 message: "Could not find any portfolio with that portfolio slug " + portfolio_slug,
-    //                 status: "PORTFOLIO_NOT_FOUND_ERR"
-    //             }
-    //         }
+            const {checkPage, checkSection} = await sectionService.checkData(req.loggedInUser.id, portfolio_slug, page_slug, section_id)
 
-    //         // check sections is available or not
-    //         const checksection = await sectionService.findSingleRowByFilter({
-    //             slug: section_slug,
-    //             portfolio_id: checkPortfolio.id
-    //         })
-    //         if(!checksection){
-    //             throw{
-    //                 code: 404,
-    //                 message: "Could not find any sections with that section slug " + section_slug,
-    //                 status: "sections_NOT_FOUND_ERR"
-    //             }
-    //         }
+            const data = req.body
 
-    //         const data = req.body
+            // check section slug already exists or not
+            if(data.type){
+                const checkType = await sectionService.findSingleRowByFilter({
+                    type: data.type,
+                    page_id: checkPage.id,
+                })
+                if(checkType && data.type !== checkType.type){
+                    throw({
+                        data: null,
+                        message: data.type + " section has already useddd",
+                        status: "SECTION_ALREADY_USED_ERR"
+                    })
+                }
+            }
 
-    //         // check section slug already exists or not
-    //         if(data.slug){      
-    //             const checkSlug = await sectionService.findSingleRowByFilter({
-    //                 slug: data.slug,
-    //                 portfolio_id: checkPortfolio.id
-    //             })
-    //             if(checkSlug){
-    //                 throw({
-    //                     data: null,
-    //                     message: data.slug + " slug has already used",
-    //                     status: "SLUG_ALREADY_USED_ERR"
-    //                 })
-    //             }
+            if(data.type === checkSection.type){
+                delete data.type
+            }
+            
+            // content validation
+            if(data.type || data.content){
+                data.content = await sectionService.validateSectionContent(
+                    data.type || checkSection.type, 
+                    data.content
+                )   
+            }
 
-    //         }
+            if(data.order !== undefined && data.order === checkSection.order){
+                delete data.order
+            }
+            // section reorder 
+            if(data.order !== undefined){
+                data.order = Number(data.order)
+                await sectionService.reorder(
+                    checkPage.id,
+                    section_id,
+                    data.order,
+                    transaction
+                )
+            }
 
-    //         // update section
-    //         const section = await sectionService.updateSingleRowByFilter(data, {
-    //             id: checksection.id,
-    //         })
+            // update section
+            const section = await sectionService.updateSingleRowByFilter(
+                data, 
+                {id: section_id},
+                transaction
+            )
 
-    //         res.json({
-    //             data: section,
-    //             message: "section updated successfully",
-    //             status: 'ok' 
-    //         })
-    //     }catch(exception){
-    //         next(exception)
-    //     }
-    // }
+            await transaction.commit()
+
+            res.json({
+                data: section,
+                message: "section updated successfully",
+                status: 'ok' 
+            })
+        }catch(exception){
+            await transaction.rollback()
+            next(exception)
+        }
+    }
 
     // async deletesection(req, res, next){
     //     try{

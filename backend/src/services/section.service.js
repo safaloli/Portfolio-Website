@@ -61,17 +61,18 @@ class sectionService {
         }
     }
 
-    // async updateSingleRowByFilter(data, filter) {
-    //     try{
-    //         let sections = await sectionModel.update(data, {
-    //             where: filter,
-    //             returning: true
-    //         })
-    //         return sections[1]
-    //     }catch(exception){
-    //         throw exception
-    //     }
-    // }
+    async updateSingleRowByFilter(data, filter, transaction = null) {
+        try{
+            let sections = await SectionModel.update(data, {
+                where: filter,
+                returning: true,
+                transaction
+            })
+            return sections[1]
+        }catch(exception){
+            throw exception
+        }
+    }
 
     // async findAllsectionsForAdmin(portfolio_id) {
     //     try{
@@ -200,7 +201,7 @@ class sectionService {
                         id: section_id,
                     }
                 })
-                if(!checkPage){
+                if(!checkSection){
                     throw ({
                         code: 404,
                         message: "Could not find any section",
@@ -219,6 +220,7 @@ class sectionService {
         try{
             const schema = sectionValidationMap[type]
 
+            console.log('im inside validation')
             if(!schema){
                 throw{
                     code: 400,
@@ -242,8 +244,7 @@ class sectionService {
         }
     }
 
-    async reorder(page_id, section_id, newOrder ) {
-        const transaction = await sequelize.transaction();
+    async reorder(page_id, section_id, newOrder, transaction) {
         try{
             if(newOrder <= 0 || !Number.isInteger(newOrder)){
                 throw{
@@ -269,7 +270,6 @@ class sectionService {
             const oldOrder = section.order;
     
             if (oldOrder === newOrder) {
-                await transaction.commit();
                 return;
             }
     
@@ -305,16 +305,12 @@ class sectionService {
             section.order = newOrder;
             await section.save({ transaction });
     
-            await transaction.commit();
         }catch(exception){
-            await transaction.rollback();
             throw exception
         }
     }
 
-    async reindexPageSections(page_id) {
-        const transaction = await sequelize.transaction()
-
+    async reindexPageSections(page_id, transaction) {
         try{
             const sections = await SectionModel.findAll({
                 where: { page_id },
@@ -331,10 +327,8 @@ class sectionService {
                 updateOnDuplicate: ['order'],
                 transaction
             })
-    
-            await transaction.commit()
+
         }catch(exception){
-            await transaction.rollback()
             throw exception
         }
     }

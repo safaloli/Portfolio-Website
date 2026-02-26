@@ -1,13 +1,13 @@
 const Joi = require('joi')
 
 const SectionDto = Joi.object({
-    type: Joi.string().min(3).max(100).required(),
+    type: Joi.string().min(1).max(100).required(),
     content: Joi.object().optional(),
     is_active: Joi.boolean().optional(),
 })
 
 const UpdateSectionDto = Joi.object({
-    type: Joi.string().min(3).max(100).optional(),
+    type: Joi.string().min(1).max(100).optional(),
     content: Joi.object().optional(),
     order: Joi.number().integer().min(0).optional(),
     is_active: Joi.boolean().optional(),

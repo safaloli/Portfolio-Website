@@ -12,7 +12,7 @@ sectionRouter.post('/:portfolio_slug/:page_slug/section/create', loginCheck(), b
 sectionRouter.patch('/:portfolio_slug/:page_slug/section/:section_id/reorder', loginCheck(), bodyValidator(ReorderSectionDto), sectionCtrl.reorderSections)
 
 // update sections 
-// sectionRouter.patch('/:portfolio_slug/:section_slug/edit', loginCheck(), bodyValidator(UpdatesectionDto), sectionCtrl.updatesection)
+sectionRouter.patch('/:portfolio_slug/:page_slug/:section_id/edit', loginCheck(), bodyValidator(UpdateSectionDto), sectionCtrl.updateSection)
 
 // delete sections
 // sectionRouter.delete('/:portfolio_slug/:section_slug', loginCheck(), sectionCtrl.deletesection)
