@@ -122,7 +122,7 @@ class sectionController {
 
             const data = req.body
 
-            // check section slug already exists or not
+            // check section type already exists or not
             if(data.type){
                 const checkType = await sectionService.findSingleRowByFilter({
                     type: data.type,
@@ -136,7 +136,7 @@ class sectionController {
                     })
                 }
             }
-
+            // remove same type in data
             if(data.type === checkSection.type){
                 delete data.type
             }
