@@ -20,11 +20,22 @@ const SectionModel = sequelize.define("sections", {
     },
     order: {
         type: DataTypes.INTEGER,
+        allowNull: false,
     },
     is_active: {
         type: DataTypes.BOOLEAN,
         defaultValue: true,
     }
+}, {
+    indexes: [
+        {
+            fields: ['page_id', 'type'],
+            unique: true
+        }, {
+            fields: ['page_id', 'order'],
+            unique: true,
+        }
+    ]
 })
 
 module.exports = SectionModel

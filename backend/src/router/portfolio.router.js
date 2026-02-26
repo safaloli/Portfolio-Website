@@ -14,9 +14,11 @@ portfolioRouter.patch('/edit/:portfolio_id', loginCheck(), bodyValidator(updateP
 // delete portfolio
 portfolioRouter.delete('/delete/:portfolio_id', loginCheck(), portfolioCtrl.deletePortfolio)
 
-// public route
-portfolioRouter.get('/slug/:slug', portfolioCtrl.getPortfolioBySlug)
-
 // superadmin router
 portfolioRouter.get('/all', loginCheck([UserRoles.ADMIN]), portfolioCtrl.getAllPortfolioForSuperAdmin)
+
+// public route
+portfolioRouter.get('/:slug', portfolioCtrl.getPortfolioBySlug)
+
+
 module.exports = portfolioRouter

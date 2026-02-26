@@ -3,8 +3,8 @@ const SessionModel = require('./Session.model')
 const {sequelize} = require('../config/sequelize.config')
 
 const PortfolioModel = require('./Portfolio.model')
-const PageModel = require('./Pages.model')
-const SectionModel = require('./Sections.model')
+const PageModel = require('./Page.model')
+const SectionModel = require('./Section.model')
 
 
 // Define association

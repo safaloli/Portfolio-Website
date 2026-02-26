@@ -42,3 +42,8 @@ How to add custom domain support
 How to build theme engine
         
     
+<!-- for auto updating order by drag and drop section -->
+🔥 How to handle drag-and-drop reorder safely
+🔥 How to re-index orders after deletion
+🔥 How to prevent duplicate order race conditions
+🔥 How to use transaction for safe ordering

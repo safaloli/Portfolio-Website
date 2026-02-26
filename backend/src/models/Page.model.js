@@ -11,11 +11,12 @@ const PageModel = sequelize.define('pages', {
         type: DataTypes.UUID,
         allowNull: false,
     },
-    name: {
+    title: {
         type: DataTypes.STRING,
     },
-    slog: {
-        type: DataTypes.STRING
+    slug: {
+        type: DataTypes.STRING,
+        allowNull: false,
     },
     order: {
         type: DataTypes.INTEGER
@@ -24,6 +25,13 @@ const PageModel = sequelize.define('pages', {
         type: DataTypes.BOOLEAN,
         defaultValue: true
     }
+}, {
+    indexes: [
+        {
+            unique: true,
+            fields: ['portfolio_id', 'slug']
+        }
+    ]
 })
 
 module.exports = PageModel
