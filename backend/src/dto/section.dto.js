@@ -13,6 +13,10 @@ const UpdateSectionDto = Joi.object({
     is_active: Joi.boolean().optional(),
 })
 
+const ReorderSectionDto = Joi.object({
+    new_order : Joi.number().integer().min(1).required() 
+})
+
 // const heroContentSchema = Joi.object({
 //     title: Joi.string().required(),
 //     subtitle: Joi.string().optional(),
@@ -31,4 +35,5 @@ const UpdateSectionDto = Joi.object({
 module.exports = {
     SectionDto,
     UpdateSectionDto,
+    ReorderSectionDto,
 }

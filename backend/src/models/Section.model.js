@@ -31,9 +31,6 @@ const SectionModel = sequelize.define("sections", {
         {
             fields: ['page_id', 'type'],
             unique: true
-        }, {
-            fields: ['page_id', 'order'],
-            unique: true,
         }
     ]
 })

@@ -18,6 +18,26 @@ class sectionController {
         }
     }
 
+    async reorderSections(req, res, next){
+        try{
+            const {portfolio_slug, page_slug, section_id} = req.params
+            let new_order = req.body.new_order
+            new_order = Number(new_order)
+
+            const {checkPage} = await sectionService.checkData(req.loggedInUser.id, portfolio_slug, page_slug, section_id)
+
+            await sectionService.reorder(checkPage.id, section_id, new_order)
+
+            res.json({
+                data: null,
+                message: "Sections are reordered successfully",
+                status: 'ok'
+            })
+        }catch(exception){
+            next(exception)
+        }
+    }
+
     // async getsectionBySlug(req, res, next) {
     //     try{
     //         const {section_slug, portfolio_slug} = req.params

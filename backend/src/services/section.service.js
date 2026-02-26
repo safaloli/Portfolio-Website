@@ -2,7 +2,7 @@ const {sectionValidationMap, sectionDefaultContent} = require('../config/section
 const { sequelize } = require('../config/sequelize.config')
 
 const {SectionModel, PortfolioModel, PageModel } = require("../models")
-const {UniqueConstraintError} = require('sequelize')
+const {UniqueConstraintError, Op} = require('sequelize')
 
 class sectionService {
     async transformForCreate(req){
@@ -37,7 +37,7 @@ class sectionService {
             const maxOrder = await SectionModel.max('order', {
                 where: { page_id: data.page_id }
             })
-            data.order = maxOrder !== null? maxOrder + 1 : 0
+            data.order = maxOrder !== null? maxOrder + 1 : 1
 
             return data
 
@@ -108,6 +108,15 @@ class sectionService {
         }
     }
 
+    async findAllByFilter(filter){
+        try{
+            const result = await SectionModel.findAll({where: filter})
+            return result
+        }catch(exception){
+            throw exception
+        }
+    }
+
     // async findPublicsectionBySlug(slug) {
     //     try{
     //         const section = await sectionModel.findOne({
@@ -149,8 +158,8 @@ class sectionService {
         try{
             let checkPortfolio, checkPage, checkSection = null
 
+            // check portfolio exits or not
             if(portfolio_slug !== null){
-                // check portfolio exits or not
                 checkPortfolio = await PortfolioModel.findOne({
                     where: {
                         slug: portfolio_slug,
@@ -166,8 +175,8 @@ class sectionService {
                 }
             }
 
+            // check page exits or not
             if(page_slug !== null){
-                // check page exits or not
                 checkPage = await PageModel.findOne({
                     where: {
                         slug: page_slug,
@@ -183,19 +192,19 @@ class sectionService {
                 }
             }
 
+            // check section exits or not
             if(section_id !== null){
-                // check section exits or not
-                checkPage = await SectionModel.findOne({
+                
+                checkSection = await SectionModel.findOne({
                     where: {
                         id: section_id,
-                        page_id: checkPage.id
                     }
                 })
                 if(!checkPage){
                     throw ({
                         code: 404,
-                        message: "Could not find any page",
-                        status: "PAGE_NOT_FOUND_ERR"
+                        message: "Could not find any section",
+                        status: "SECTION_NOT_FOUND_ERR"
                     })
                 }
             }
@@ -229,6 +238,103 @@ class sectionService {
                     status: "SECTION_VALIDATION_ERR"
                 }
             }
+            throw exception
+        }
+    }
+
+    async reorder(page_id, section_id, newOrder ) {
+        const transaction = await sequelize.transaction();
+        try{
+            if(newOrder <= 0 || !Number.isInteger(newOrder)){
+                throw{
+                    code: 400,
+                    message: "Invalid order number",
+                    status: "INVALID_ORDER_NUMBER_ERR"
+                }
+            }
+
+            const section = await SectionModel.findOne({
+                where: { id: section_id, page_id: page_id },
+                transaction
+            });
+    
+            if (!section) {
+                throw {
+                    code: 404,
+                    message: "Section not found",
+                    status: "SECTION_NOT_FOUND_ERR"
+                };
+            }
+    
+            const oldOrder = section.order;
+    
+            if (oldOrder === newOrder) {
+                await transaction.commit();
+                return;
+            }
+    
+            // Moving DOWN
+            if (newOrder > oldOrder) {
+                await SectionModel.update(
+                    { order: sequelize.literal('"order" - 1') },
+                    {
+                        where: {
+                            page_id,
+                            order: { [Op.gt]: oldOrder, [Op.lte]: newOrder }
+                        },
+                        transaction
+                    }
+                );
+            }
+    
+            // Moving UP
+            if (newOrder < oldOrder) {
+                await SectionModel.update(
+                    { order: sequelize.literal('"order" + 1') },
+                    {
+                        where: {
+                            page_id,
+                            order: { [Op.gte]: newOrder, [Op.lt]: oldOrder }
+                        },
+                        transaction
+                    }
+                );
+            }
+    
+            // Finally update dragged section
+            section.order = newOrder;
+            await section.save({ transaction });
+    
+            await transaction.commit();
+        }catch(exception){
+            await transaction.rollback();
+            throw exception
+        }
+    }
+
+    async reindexPageSections(page_id) {
+        const transaction = await sequelize.transaction()
+
+        try{
+            const sections = await SectionModel.findAll({
+                where: { page_id },
+                order: [['order', 'ASC']],
+                transaction
+            });
+    
+            const updates = sections.map((section, index) => ({
+                id: section.id,
+                order: index
+            }))
+        
+            await SectionModel.bulkCreate(updates, {
+                updateOnDuplicate: ['order'],
+                transaction
+            })
+    
+            await transaction.commit()
+        }catch(exception){
+            await transaction.rollback()
             throw exception
         }
     }
