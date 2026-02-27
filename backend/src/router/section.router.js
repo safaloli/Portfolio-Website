@@ -18,7 +18,7 @@ sectionRouter.patch('/:portfolio_slug/:page_slug/:section_id/edit', loginCheck()
 sectionRouter.delete('/:portfolio_slug/:page_slug/:section_id', loginCheck(), sectionCtrl.deleteSection)
 
 // superadmin router
-// sectionRouter.get('/:portfolio_slug/sections/all', loginCheck([UserRoles.ADMIN]), sectionCtrl.getAllsectionsForAdmin)
+sectionRouter.get('/:portfolio_slug/:page_slug/sections/all', sectionCtrl.getAllSections)
 
 // public route
 sectionRouter.get('/:portfolio_slug/:page_slug/:section_id', sectionCtrl.getSection)

@@ -74,31 +74,21 @@ class sectionService {
         }
     }
 
-    // async findAllsectionsForAdmin(portfolio_id) {
-    //     try{
-    //         const allsections = await sectionModel.findAll({
-    //             where: {portfolio_id: portfolio_id},
-    //             model: sectionModel,
-    //             as: 'sections',
-    //             include: [
-    //                 {
-    //                     model: SectionModel,
-    //                     where: {is_active: true},
-    //                     required: false,
-    //                     as: 'sections'
-    //                 }
-    //             ]
-    //         })
+    async findAllSectionsForPublic(page_id) {
+        try{
+            const allSections = await SectionModel.findAll({
+                where: {page_id: page_id},
+            })
 
-    //         if(!allsections){
-    //             throw ({code: 404, message: "There is no any sections in database"})
-    //         }
+            if(!allSections){
+                throw ({code: 404, message: "There is no any sections in database"})
+            }
 
-    //         return allsections
-    //     }catch(exception){
-    //         throw exception
-    //     }
-    // }
+            return allSections
+        }catch(exception){
+            throw exception
+        }
+    }
 
     async findSingleRowByFilter(filter){
         try{
@@ -117,26 +107,6 @@ class sectionService {
             throw exception
         }
     }
-
-    // async findPublicsectionBySlug(slug) {
-    //     try{
-    //         const section = await sectionModel.findOne({
-    //             where: {slug, is_active: true},
-    //             include: [
-    //                 {
-    //                     model: SectionModel,
-    //                     where: {is_active: true},
-    //                     required: false,
-    //                     as: 'sections'
-    //                 }
-    //             ]
-    //         })
-
-    //         return section
-    //     }catch(exception){
-    //         throw exception
-    //     }
-    // }
 
     async deleteSingleRowByFilter(filter, transaction = null){
         try{

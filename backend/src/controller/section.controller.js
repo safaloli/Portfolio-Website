@@ -55,33 +55,24 @@ class sectionController {
         }
     }
 
-    // async getAllsectionsForAdmin(req, res, next) {
-    //     try{
-    //         const {portfolio_slug} = req.params
+    async getAllSections(req, res, next) {
+        try{
+            const {portfolio_slug, page_slug} = req.params
 
-    //         // check portfolio is available or not
-    //         const checkPortfolio = await portfolioService.findSingleRowByFilter({
-    //             slug: portfolio_slug,
-    //         })
-    //         if(!checkPortfolio){
-    //             throw{
-    //                 code: 404,
-    //                 message: "Could not find any portfolio with that portfolio slug " + portfolio_slug,
-    //                 status: "PORTFOLIO_NOT_FOUND_ERR"
-    //             }
-    //         }
+            // check portfolio is available or not
+            const {checkPage} = await sectionService.checkData(null, portfolio_slug, page_slug)
 
-    //         const allsections = await sectionService.findAllsectionsForAdmin(checkPortfolio.id)
+            const allsections = await sectionService.findAllSectionsForPublic(checkPage.id)
 
-    //         res.json({
-    //             data: allsections,
-    //             message: "Successfully fetched all sections ",
-    //             status: "ok" 
-    //         })
-    //     }catch(exception){
-    //         next(exception)
-    //     }
-    // }
+            res.json({
+                data: allsections,
+                message: "Successfully fetched all sections of " + page_slug + " page",
+                status: "ok" 
+            })
+        }catch(exception){
+            next(exception)
+        }
+    }
 
 
     async updateSection(req, res, next){
