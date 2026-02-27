@@ -21,7 +21,7 @@ sectionRouter.patch('/:portfolio_slug/:page_slug/:section_id/edit', loginCheck()
 // sectionRouter.get('/:portfolio_slug/sections/all', loginCheck([UserRoles.ADMIN]), sectionCtrl.getAllsectionsForAdmin)
 
 // public route
-// sectionRouter.get('/:portfolio_slug/:section_slug', sectionCtrl.getsectionBySlug)
+sectionRouter.get('/:portfolio_slug/:page_slug/section/:section_id', sectionCtrl.getSection)
 
 
 module.exports = sectionRouter

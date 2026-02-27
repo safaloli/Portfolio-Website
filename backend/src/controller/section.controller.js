@@ -39,50 +39,21 @@ class sectionController {
         }
     }
 
-    // async getsectionBySlug(req, res, next) {
-    //     try{
-    //         const {section_slug, portfolio_slug} = req.params
+    async getSection(req, res, next) {
+        try{
+            const {portfolio_slug, page_slug, section_id} = req.params
 
-    //         if(!portfolio_slug) {
-    //             throw({
-    //                 code: 500,
-    //                 message: "Portfolio slug is empty",
-    //                 status: "PORTFOLIO_SLUG_EMPTY_ERR"
-    //             })
-    //         }
-            
-    //         if(!section_slug) {
-    //             throw({
-    //                 code: 500,
-    //                 message: "Portfolio > section slug is empty",
-    //                 status: "section_SLUG_EMPTY_ERR"
-    //             })
-    //         }
-    //         const portfolio = await portfolioService.findSingleRowByFilter({slug: portfolio_slug})
+            const {checkSection} = await sectionService.checkData(req.loggedInUser?.id, portfolio_slug, page_slug, section_id)
 
-    //         if(!portfolio){
-    //             throw ({code: 404, message: "Portfolio could not found", status: "PORTFOLIO_NOT_FOUND_ERR"})
-    //         }
-
-    //         const section = await sectionService.findPublicsectionBySlug(section_slug)
-
-    //         if(!section){
-    //             throw ({
-    //                 code: 404,
-    //                 message: "Could find any section related to this " + section_slug,
-    //                 status: "section_NOT_FOUND_ERR"
-    //             })
-    //         }
-
-    //         res.json({
-    //             data: section,
-    //             message: "Successfully fetched all sections data of " + section.title,
-    //             status: "ok" 
-    //         })
-    //     }catch(exception){
-    //         next(exception)
-    //     }
-    // }
+            res.json({
+                data: checkSection,
+                message: `Successfully fetched all data of ${checkSection.type} section` ,
+                status: "ok" 
+            })
+        }catch(exception){
+            next(exception)
+        }
+    }
 
     // async getAllsectionsForAdmin(req, res, next) {
     //     try{

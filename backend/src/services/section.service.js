@@ -161,11 +161,14 @@ class sectionService {
 
             // check portfolio exits or not
             if(portfolio_slug !== null){
+                let portfolioFilter = null;
+                if(!user_id){
+                    portfolioFilter = {slug: portfolio_slug}
+                }else{
+                    portfolioFilter = {slug: portfolio_slug, user_id: user_id}
+                }
                 checkPortfolio = await PortfolioModel.findOne({
-                    where: {
-                        slug: portfolio_slug,
-                        user_id: user_id
-                    }
+                    where: portfolioFilter
                 })
                 if(!checkPortfolio){
                     throw ({
