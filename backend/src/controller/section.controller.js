@@ -154,38 +154,36 @@ class sectionController {
         }
     }
 
-    // async deletesection(req, res, next){
-    //     try{
-    //         const {portfolio_slug, section_slug} = req.params
+    async deleteSection(req, res, next){
+        const transaction = await sequelize.transaction()
+        try{
+            const {portfolio_slug, page_slug, section_id} = req.params
 
-    //         // check portfolio is available or not
-    //         const checkPortfolio = await portfolioService.findSingleRowByFilter({
-    //             slug: portfolio_slug,
-    //             user_id: req.loggedInUser.id
-    //         })
-    //         if(!checkPortfolio){
-    //             throw{
-    //                 code: 404,
-    //                 message: "Could not find any portfolio with that portfolio slug " + portfolio_slug,
-    //                 status: "PORTFOLIO_NOT_FOUND_ERR"
-    //             }
-    //         }
+            // check portfolio is available or not
+            const {checkPage} = await sectionService.checkData(req.loggedInUser.id, portfolio_slug, page_slug, section_id)
 
+            const deleteCount = await sectionService.deleteSingleRowByFilter(
+                {
+                    page_id: checkPage.id,
+                    id: section_id,
+                },
+                transaction
+            )
 
-    //         const deleteCount = await sectionService.deleteSingleRowByFilter({
-    //             portfolio_id: checkPortfolio.id,
-    //             slug: section_slug
-    //         })
+            await sectionService.reindexPageSections(checkPage.id, transaction)
 
-    //         res.json({
-    //             data: null,
-    //             message: deleteCount + " sections has been deleted successfully",
-    //             status: 'ok'
-    //         })
-    //     }catch(exception){
-    //         next(exception)
-    //     }
-    // }
+            await transaction.commit()
+
+            res.json({
+                data: null,
+                message: deleteCount + " sections has been deleted successfully",
+                status: 'ok'
+            })
+        }catch(exception){
+            await transaction.rollback()
+            next(exception)
+        }
+    }
 }
 
 module.exports = new sectionController()

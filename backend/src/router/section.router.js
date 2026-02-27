@@ -9,19 +9,19 @@ const bodyValidator = require('../middleware/validator.middleware')
 sectionRouter.post('/:portfolio_slug/:page_slug/section/create', loginCheck(), bodyValidator(SectionDto), sectionCtrl.createSection)
 
 // reorder sections
-sectionRouter.patch('/:portfolio_slug/:page_slug/section/:section_id/reorder', loginCheck(), bodyValidator(ReorderSectionDto), sectionCtrl.reorderSections)
+sectionRouter.patch('/:portfolio_slug/:page_slug/:section_id/reorder', loginCheck(), bodyValidator(ReorderSectionDto), sectionCtrl.reorderSections)
 
 // update sections 
 sectionRouter.patch('/:portfolio_slug/:page_slug/:section_id/edit', loginCheck(), bodyValidator(UpdateSectionDto), sectionCtrl.updateSection)
 
 // delete sections
-// sectionRouter.delete('/:portfolio_slug/:section_slug', loginCheck(), sectionCtrl.deletesection)
+sectionRouter.delete('/:portfolio_slug/:page_slug/:section_id', loginCheck(), sectionCtrl.deleteSection)
 
 // superadmin router
 // sectionRouter.get('/:portfolio_slug/sections/all', loginCheck([UserRoles.ADMIN]), sectionCtrl.getAllsectionsForAdmin)
 
 // public route
-sectionRouter.get('/:portfolio_slug/:page_slug/section/:section_id', sectionCtrl.getSection)
+sectionRouter.get('/:portfolio_slug/:page_slug/:section_id', sectionCtrl.getSection)
 
 
 module.exports = sectionRouter

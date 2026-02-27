@@ -138,22 +138,25 @@ class sectionService {
     //     }
     // }
 
-    // async deleteSingleRowByFilter(filter){
-    //     try{
-    //         const deleteCount = await sectionModel.destroy({where: filter})
+    async deleteSingleRowByFilter(filter, transaction = null){
+        try{
+            const deleteCount = await SectionModel.destroy(
+                {where: filter}, 
+                transaction
+            )
 
-    //         if(deleteCount === 0){
-    //             throw({
-    //                 code: 404,
-    //                 message: "section not found while deleting",
-    //                 status: "section_NOT_FOUND_ERR"
-    //             })
-    //         }
-    //         return deleteCount
-    //     }catch(exception){  
-    //         throw exception
-    //     }
-    // }
+            if(deleteCount === 0){
+                throw({
+                    code: 404,
+                    message: "section not found while deleting",
+                    status: "section_NOT_FOUND_ERR"
+                })
+            }
+            return deleteCount
+        }catch(exception){  
+            throw exception
+        }
+    }
 
     async checkData(user_id, portfolio_slug = null, page_slug = null, section_id = null) {
         try{
@@ -321,16 +324,12 @@ class sectionService {
                 transaction
             });
     
-            const updates = sections.map((section, index) => ({
-                id: section.id,
-                order: index
-            }))
-        
-            await SectionModel.bulkCreate(updates, {
-                updateOnDuplicate: ['order'],
-                transaction
-            })
-
+            for(let i = 0; i < sections.length; i++) {
+                await sections[i].update(
+                    {order: i+1},
+                    transaction
+                )
+            }
         }catch(exception){
             throw exception
         }
