@@ -72,7 +72,8 @@ Built for scalability and maintainability.
 ##🚀 Installation
 - git clone https://github.com/safaloli/Portfolio-Website.git
 - cd Portfolio-Website
-- npm install
+- cd backend
+- pnpm install
 
 ## Configure Environment Variables
 
